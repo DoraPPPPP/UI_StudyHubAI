@@ -7,6 +7,7 @@ const nav = [
   ['groups', '♧', 'Nhóm học tập'],
   ['storage', '◫', 'Dung lượng'],
   ['profile', '○', 'Hồ sơ'],
+  ['admin', '⚙', 'Quản trị'],
 ];
 
 const documents = [
@@ -28,6 +29,9 @@ function Icon({ children, tone = '' }) {
 
 function Login({ onLogin }) {
   const [register, setRegister] = useState(false);
+  const [email, setEmail] = useState('minh@student.edu.vn');
+  const [password, setPassword] = useState('12345678');
+  const submit = () => onLogin(email.trim().toLowerCase() === 'admin@aistudyhub.vn' ? 'admin' : 'user');
   return <div className="auth-shell">
     <section className="auth-art">
       <div className="brand light"><span>✦</span> AI Study Hub</div>
@@ -46,30 +50,33 @@ function Login({ onLogin }) {
         <h2>{register ? 'Tạo tài khoản' : 'Đăng nhập'}</h2>
         <p>{register ? 'Bắt đầu xây dựng thư viện học tập của riêng bạn.' : 'Tiếp tục hành trình học tập của bạn.'}</p>
         {register && <label>Họ và tên<input placeholder="Nguyễn Văn A" /></label>}
-        <label>Email hoặc tên đăng nhập<input defaultValue="minh@student.edu.vn" /></label>
-        <label>Mật khẩu<input type="password" defaultValue="12345678" /></label>
-        <button className="primary wide" onClick={onLogin}>{register ? 'Tạo tài khoản' : 'Đăng nhập'} <span>→</span></button>
+        <label>Email hoặc tên đăng nhập<input value={email} onChange={e=>setEmail(e.target.value)} /></label>
+        <label>Mật khẩu<input type="password" value={password} onChange={e=>setPassword(e.target.value)} /></label>
+        <button className="primary wide" onClick={submit}>{register ? 'Tạo tài khoản' : 'Đăng nhập'} <span>→</span></button>
         <div className="divider"><span>hoặc</span></div>
-        <button className="google" onClick={onLogin}><b>G</b> Tiếp tục với Google</button>
+        <button className="google" onClick={()=>onLogin('user')}><b>G</b> Tiếp tục với Google</button>
+        {!register && <div className="demo-accounts"><span>Tài khoản demo</span><button onClick={()=>{setEmail('minh@student.edu.vn');setPassword('12345678')}}><b>User</b> minh@student.edu.vn</button><button onClick={()=>{setEmail('admin@aistudyhub.vn');setPassword('admin123')}}><b>Admin</b> admin@aistudyhub.vn</button></div>}
         <p className="switch">{register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'} <button onClick={() => setRegister(!register)}>{register ? 'Đăng nhập' : 'Đăng ký ngay'}</button></p>
       </div>
     </section>
   </div>
 }
 
-function Sidebar({ page, setPage, logout }) {
+function Sidebar({ page, setPage, logout, role }) {
+  const items = role === 'admin' ? [['admin', '▦', 'Tổng quan quản trị']] : nav.filter(x=>x[0] !== 'admin');
   return <aside className="sidebar">
-    <div className="brand"><span>✦</span> AI Study Hub</div>
-    <nav>{nav.map(([id, icon, label]) => <button key={id} className={page === id ? 'active' : ''} onClick={() => setPage(id)}><b>{icon}</b>{label}</button>)}</nav>
+    <div className="brand"><span>✦</span> {role === 'admin' ? 'AI Hub Admin' : 'AI Study Hub'}</div>
+    {role === 'admin' && <div className="admin-role-badge">ADMINISTRATOR</div>}
+    <nav>{items.map(([id, icon, label]) => <button key={id} className={page === id ? 'active' : ''} onClick={() => setPage(id)}><b>{icon}</b>{label}</button>)}</nav>
     <div className="side-bottom">
-      <div className="storage-mini"><div><span>Dung lượng</span><strong>68%</strong></div><progress value="68" max="100"/><small>3.4 GB / 5 GB</small></div>
+      {role !== 'admin' && <div className="storage-mini"><div><span>Dung lượng</span><strong>68%</strong></div><progress value="68" max="100"/><small>3.4 GB / 5 GB</small></div>}
       <button className="logout" onClick={logout}>↪ Đăng xuất</button>
     </div>
   </aside>
 }
 
-function Topbar({ title, onUpload }) {
-  return <header className="topbar"><div><span className="crumb">Workspace /</span><h2>{title}</h2></div><div className="top-actions"><button className="search">⌕ <span>Tìm kiếm...</span><kbd>⌘ K</kbd></button><button className="bell">♢<i>3</i></button><button className="avatar">MT</button><button className="primary" onClick={onUpload}>＋ Tải tài liệu</button></div></header>
+function Topbar({ title, onUpload, role }) {
+  return <header className="topbar"><div><span className="crumb">{role === 'admin' ? 'Admin Console /' : 'Workspace /'}</span><h2>{title}</h2></div><div className="top-actions"><button className="search">⌕ <span>Tìm kiếm...</span><kbd>⌘ K</kbd></button><button className="bell">♢<i>3</i></button><button className="avatar">{role === 'admin' ? 'AD' : 'MT'}</button>{role === 'admin' ? <button className="admin-export">↓ Xuất báo cáo</button> : <button className="primary" onClick={onUpload}>＋ Tải tài liệu</button>}</div></header>
 }
 
 function Dashboard({ setPage, onUpload }) {
@@ -120,6 +127,38 @@ function Profile() {
   return <div className="page fade"><section className="page-title"><div><span className="eyebrow purple">TÀI KHOẢN</span><h1>Hồ sơ cá nhân</h1><p>Quản lý thông tin và cài đặt tài khoản.</p></div></section>{saved&&<div className="toast">✓ Đã lưu thay đổi</div>}<div className="profile-grid"><section className="panel profile-card"><div className="profile-avatar">MT</div><h2>Minh Trần</h2><p>minh@student.edu.vn</p><span>STUDENT PLAN</span><hr/><div><b>128</b><small>Tài liệu</small><b>5</b><small>Nhóm</small></div></section><section className="panel profile-form"><h3>Thông tin cá nhân</h3><div className="form-grid"><label>Họ và tên<input defaultValue="Minh Trần"/></label><label>Tên đăng nhập<input defaultValue="minhtth5"/></label><label>Email<input defaultValue="minh@student.edu.vn"/></label><label>Trường học<input defaultValue="FPT University"/></label></div><label>Giới thiệu<textarea defaultValue="Sinh viên ngành Kỹ thuật phần mềm, yêu thích AI và phát triển sản phẩm."/></label><button className="primary" onClick={()=>setSaved(true)}>Lưu thay đổi</button></section></div></div>
 }
 
+function Admin() {
+  const [tab, setTab] = useState('users');
+  const [users, setUsers] = useState([
+    { name: 'Nguyễn Hoàng Minh', email: 'minh@student.edu.vn', role: 'USER', plan: 'Student', status: 'Hoạt động', joined: '03/07/2026', avatar: 'NM' },
+    { name: 'Trần Ngọc Lan', email: 'lan.tran@student.edu.vn', role: 'USER', plan: 'Pro', status: 'Hoạt động', joined: '01/07/2026', avatar: 'TL' },
+    { name: 'Lê Gia Huy', email: 'huy.le@student.edu.vn', role: 'USER', plan: 'Starter', status: 'Đã khóa', joined: '29/06/2026', avatar: 'LH' },
+    { name: 'Phạm Anh Thư', email: 'thu.pham@student.edu.vn', role: 'USER', plan: 'Student', status: 'Hoạt động', joined: '27/06/2026', avatar: 'PT' },
+  ]);
+  const toggle = (email) => setUsers(list => list.map(u => u.email === email ? {...u, status: u.status === 'Đã khóa' ? 'Hoạt động' : 'Đã khóa'} : u));
+  return <div className="page admin-page fade">
+    <section className="page-title"><div><span className="eyebrow purple">ADMIN CONSOLE</span><h1>Trung tâm quản trị</h1><p>Theo dõi hoạt động và quản lý toàn bộ hệ thống.</p></div><div className="admin-date">◷ Dữ liệu mock · 03/07/2026</div></section>
+    <section className="stats admin-stats">
+      <article><Icon tone="blue">♧</Icon><div><span>Người dùng</span><strong>1,284</strong><small>↑ 12.4% tháng này</small></div></article>
+      <article><Icon tone="violet">▱</Icon><div><span>Tài liệu</span><strong>8,642</strong><small>↑ 18.7% tháng này</small></div></article>
+      <article><Icon tone="green">◎</Icon><div><span>Nhóm hoạt động</span><strong>186</strong><small>↑ 7.2% tháng này</small></div></article>
+      <article><Icon tone="orange">₫</Icon><div><span>Doanh thu</span><strong>24.8M</strong><small>↑ 9.5% tháng này</small></div></article>
+    </section>
+    <div className="admin-insights">
+      <section className="panel admin-chart"><div className="panel-head"><div><h3>Tăng trưởng người dùng</h3><p>Số tài khoản mới trong 7 tháng gần nhất</p></div><button>7 tháng⌄</button></div><div className="chart-area"><div className="y-axis"><span>400</span><span>300</span><span>200</span><span>100</span><span>0</span></div><div className="bars">{[['T1',130],['T2',185],['T3',160],['T4',245],['T5',275],['T6',320],['T7',372]].map(([m,v])=><div key={m}><span style={{height:`${v/4}px`}}><i>{v}</i></span><small>{m}</small></div>)}</div></div></section>
+      <section className="panel system-health"><div className="panel-head"><div><h3>Trạng thái hệ thống</h3><p>Tổng quan các dịch vụ</p></div><span className="healthy">● Ổn định</span></div>{[['REST API','99.98%'],['Cloud Storage','99.95%'],['AI Service','99.72%'],['Email Service','99.91%']].map(([x,v])=><div className="health-row" key={x}><span><i/> {x}</span><b>{v}</b></div>)}<div className="health-note">Không có sự cố nghiêm trọng trong 24 giờ qua.</div></section>
+    </div>
+    <section className="panel admin-management">
+      <div className="admin-tabs"><button className={tab==='users'?'active':''} onClick={()=>setTab('users')}>Người dùng</button><button className={tab==='groups'?'active':''} onClick={()=>setTab('groups')}>Nhóm học tập</button><button className={tab==='plans'?'active':''} onClick={()=>setTab('plans')}>Gói dịch vụ</button><button className={tab==='logs'?'active':''} onClick={()=>setTab('logs')}>System Logs</button><div className="search-input">⌕ <input placeholder="Tìm kiếm..."/></div></div>
+      {tab==='users' && <div className="admin-table"><div className="admin-tr header"><span>NGƯỜI DÙNG</span><span>VAI TRÒ</span><span>GÓI</span><span>NGÀY THAM GIA</span><span>TRẠNG THÁI</span><span></span></div>{users.map(u=><div className="admin-tr" key={u.email}><span className="admin-user"><i>{u.avatar}</i><b>{u.name}<small>{u.email}</small></b></span><span>{u.role}</span><span><em className={`plan-${u.plan.toLowerCase()}`}>{u.plan}</em></span><span>{u.joined}</span><span><em className={u.status==='Hoạt động'?'status-active':'status-locked'}>● {u.status}</em></span><span><button className="row-action" onClick={()=>toggle(u.email)}>{u.status==='Đã khóa'?'Mở khóa':'Khóa'}</button></span></div>)}</div>}
+      {tab==='groups' && <div className="empty-tab"><Icon tone="green">♧</Icon><h3>186 nhóm học tập</h3><p>Danh sách nhóm, thành viên và trạng thái kiểm duyệt sẽ hiển thị tại đây.</p></div>}
+      {tab==='plans' && <div className="empty-tab"><Icon tone="orange">₫</Icon><h3>3 gói dịch vụ</h3><p>Starter, Student và Pro đang được cung cấp cho người dùng.</p></div>}
+      {tab==='logs' && <div className="log-list"><p><b>ADMIN_LOGIN</b><span>admin@aistudyhub.vn đăng nhập hệ thống</span><small>10:42</small></p><p><b>USER_LOCKED</b><span>Tài khoản huy.le@student.edu.vn đã bị khóa</span><small>09:18</small></p><p><b>PLAN_UPDATED</b><span>Gói Student được cập nhật dung lượng</span><small>Hôm qua</small></p></div>}
+      <div className="table-footer"><span>Hiển thị 1–4 trong 1,284 người dùng</span><div><button>‹</button><button className="current">1</button><button>2</button><button>3</button><button>›</button></div></div>
+    </section>
+  </div>
+}
+
 function UploadModal({ close }) {
   const [done,setDone]=useState(false);
   return <div className="modal-backdrop" onMouseDown={close}><div className="modal" onMouseDown={e=>e.stopPropagation()}><button className="modal-close" onClick={close}>×</button>{done?<div className="upload-success"><span>✓</span><h2>Tải lên thành công!</h2><p>Mockup_SWP391.pdf đã được thêm vào thư viện.</p><button className="primary" onClick={close}>Hoàn tất</button></div>:<><span className="eyebrow purple">THÊM TÀI LIỆU</span><h2>Tải tài liệu mới</h2><p>Hỗ trợ PDF, DOCX, PPTX, TXT, ảnh và video.</p><div className="drop-zone"><span>↑</span><b>Kéo thả tệp vào đây</b><small>hoặc nhấn để chọn tệp từ máy tính</small></div><label>Tên tài liệu<input defaultValue="Mockup_SWP391.pdf"/></label><label>Thư mục<select><option>SWP391</option><option>Machine Learning</option><option>Database</option></select></label><div className="modal-actions"><button onClick={close}>Hủy</button><button className="primary" onClick={()=>setDone(true)}>Tải lên</button></div></>}</div></div>
@@ -127,10 +166,12 @@ function UploadModal({ close }) {
 
 export default function App() {
   const [loggedIn,setLoggedIn]=useState(false);
+  const [role,setRole]=useState('user');
   const [page,setPage]=useState('dashboard');
   const [upload,setUpload]=useState(false);
   const title=useMemo(()=>nav.find(x=>x[0]===page)?.[2]||'AI Study Hub',[page]);
-  if(!loggedIn) return <Login onLogin={()=>setLoggedIn(true)}/>;
-  const pages={dashboard:<Dashboard setPage={setPage} onUpload={()=>setUpload(true)}/>,documents:<Documents onUpload={()=>setUpload(true)}/>,assistant:<Assistant/>,groups:<Groups/>,storage:<Storage/>,profile:<Profile/>};
-  return <div className="app"><Sidebar page={page} setPage={setPage} logout={()=>setLoggedIn(false)}/><main><Topbar title={title} onUpload={()=>setUpload(true)}/>{pages[page]}</main>{upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
+  const login = (nextRole) => { setRole(nextRole); setPage(nextRole === 'admin' ? 'admin' : 'dashboard'); setLoggedIn(true); };
+  if(!loggedIn) return <Login onLogin={login}/>;
+  const pages={dashboard:<Dashboard setPage={setPage} onUpload={()=>setUpload(true)}/>,documents:<Documents onUpload={()=>setUpload(true)}/>,assistant:<Assistant/>,groups:<Groups/>,storage:<Storage/>,profile:<Profile/>,admin:<Admin/>};
+  return <div className={`app ${role === 'admin' ? 'admin-app' : ''}`}><Sidebar page={page} setPage={setPage} role={role} logout={()=>setLoggedIn(false)}/><main><Topbar title={role === 'admin' ? 'Tổng quan quản trị' : title} role={role} onUpload={()=>setUpload(true)}/>{role === 'admin' ? <Admin/> : pages[page]}</main>{role !== 'admin'&&upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
 }

@@ -1,0 +1,77 @@
+/* AI Study Hub — cohesive clean SaaS visual system */
+:root{
+  --bg:#f5f6fa;--surface:#fff;--surface-soft:#f8f9fc;--line:#e9ebf2;
+  --text:#171b2c;--muted:#747c91;--subtle:#a0a6b5;
+  --primary:#6f4de3;--primary-hover:#5f3bd7;--primary-soft:#f0edff;
+  --success:#23865d;--danger:#c34f5d;
+  --radius:14px;--radius-sm:10px;
+  --shadow:0 1px 2px rgba(18,24,40,.03),0 8px 24px rgba(18,24,40,.045);
+  --shadow-lg:0 22px 60px rgba(28,23,56,.16);
+}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+button{transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease}
+button:active{transform:translateY(1px)}
+
+/* Shell */
+.app{background:var(--bg)}
+.sidebar{background:var(--surface);border-right:1px solid var(--line);padding:26px 18px}
+.brand{font-size:17px;letter-spacing:-.35px}.brand span{box-shadow:none;border-radius:10px;background:var(--primary)}
+.sidebar nav{gap:5px;margin-top:34px}.sidebar nav button{height:43px;border-radius:10px;color:#6e768a;padding:0 13px}
+.sidebar nav button:hover{background:#f7f7fb;color:#353b4f}.sidebar nav button.active{background:var(--primary-soft);color:var(--primary)}
+.storage-mini{border:0;background:var(--surface-soft);border-radius:12px;padding:14px}.logout{color:#858c9d}.logout:hover{background:#fff0f1;color:var(--danger)}
+.topbar{height:78px;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);backdrop-filter:blur(14px);padding:0 34px}
+.topbar h2{color:#33394c}.crumb{color:#a2a8b7}.top-actions button{border:0;background:var(--surface-soft);height:40px}
+.search{border:0!important;background:var(--surface-soft)!important}.search kbd{border:0;background:#eaecf2}.bell,.avatar{border:0!important}.avatar{box-shadow:none}.primary{background:var(--primary)!important;border:0!important;box-shadow:0 7px 18px rgba(111,77,227,.18)!important}
+.primary:hover{background:var(--primary-hover)!important;box-shadow:0 9px 22px rgba(111,77,227,.23)!important}
+.page{padding:36px 38px}.welcome,.page-title{margin-bottom:28px}.welcome h1,.page-title h1{letter-spacing:-.7px}.welcome p,.page-title p{color:var(--muted)}
+
+/* Cards — one consistent surface treatment */
+.panel,.stats article,.folder-row article,.document-grid article,.group-grid article,.plans article{border:0;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stats{gap:18px;margin-bottom:18px}.stats article{padding:19px}.stats span{color:var(--muted)}.stats strong{letter-spacing:-.5px}.icon{border-radius:11px}
+.grid-main{gap:18px}.panel-head{padding:21px 22px 13px}.panel-head p{color:var(--muted)}
+.doc-row{border-top:1px solid var(--line);padding:12px}.doc-row:first-child{border-top:0}.doc-row button,.doc-preview button{color:var(--subtle)}
+.ai-prompt{border:0;box-shadow:var(--shadow);background:linear-gradient(145deg,#25243f,#35305e)}
+.activity{margin-top:18px}.activity-row{padding:3px 21px 22px}
+.toolbar>button,.view-toggle button{border:0;background:var(--surface);box-shadow:0 1px 2px rgba(18,24,40,.06);color:#646c80}
+.search-input{border:0;background:var(--surface);box-shadow:0 1px 2px rgba(18,24,40,.06);height:43px}
+.folder-row,.document-grid,.group-grid{gap:18px}.folder-row article{padding:16px}.doc-preview{background:var(--surface-soft)}
+
+/* Forms */
+input,textarea,select{color:var(--text)}
+.profile-form input,.profile-form textarea,.modal input,.modal select,.auth-form input{border:1px solid var(--line);background:#fff;border-radius:10px;box-shadow:0 1px 2px rgba(18,24,40,.02);transition:border-color .18s,box-shadow .18s}
+.profile-form input:focus,.profile-form textarea:focus,.modal input:focus,.modal select:focus,.auth-form input:focus{border-color:#9b86ed;box-shadow:0 0 0 3px rgba(111,77,227,.10);outline:0}
+.profile-form label,.modal label,.auth-form label{color:#555d70}.modal{border:0;box-shadow:var(--shadow-lg)}.drop-zone{border:1px dashed #cfc8e9;background:#faf9ff}
+
+/* Authentication */
+.auth-shell{background:#fff}.auth-art{background:radial-gradient(circle at 75% 28%,#7d5adb 0,#4e3b9f 36%,#24213c 82%)}
+.auth-form{background:#fff}.form-card{width:min(390px,100%)}.form-card h2{letter-spacing:-.8px}.form-card>p{color:var(--muted)}
+.form-card input{height:48px;padding:0 14px}.wide,.google{height:48px;border-radius:10px}.google{border:1px solid var(--line);background:#fff;color:#41485a}.google:hover{background:var(--surface-soft)}
+.divider:before,.divider:after{background:var(--line)}.demo-accounts{border:0;background:var(--surface-soft);padding:12px}.demo-accounts button{border:0;background:#fff;box-shadow:0 1px 2px rgba(18,24,40,.05)}
+
+/* Chat */
+.chat-layout{background:var(--surface)}.chat-history,.chat-context{border-color:var(--line)}.new-chat{border:0;background:var(--primary-soft);color:var(--primary)}
+.chat-history>button.selected{background:var(--primary-soft)}.messages{background:var(--bg)}
+.message p{border:0;box-shadow:var(--shadow)}.composer>div{border:1px solid var(--line);box-shadow:0 5px 20px rgba(18,24,40,.06)}
+
+/* Storage/profile */
+.storage-hero{box-shadow:var(--shadow);background:linear-gradient(135deg,#27253e,#3b3562)}
+.plans .recommended{border:1px solid #8c73e9;box-shadow:0 12px 35px rgba(111,77,227,.12)}
+.plans button{border:0;background:var(--surface-soft)}.profile-card hr{border-color:var(--line)}
+
+/* Admin */
+.admin-app .sidebar{background:#191d30;border:0}.admin-app .topbar{background:rgba(255,255,255,.94)}
+.admin-role-badge{background:#242941}.admin-export{border:0!important;background:var(--surface-soft)!important}
+.admin-date{border:0;background:var(--surface);box-shadow:0 1px 2px rgba(18,24,40,.05)}
+.admin-insights{gap:18px;margin-bottom:18px}.admin-tabs{border-bottom:1px solid var(--line)}
+.admin-tr{border-bottom:1px solid var(--line)}.admin-tr.header{background:var(--surface-soft)}.row-action{border:0;background:var(--surface-soft)}
+.health-row{border-top:1px solid var(--line)}.health-note{background:#f0f8f4}.table-footer button{border:1px solid var(--line)}
+
+/* Mobile cleanup */
+@media(max-width:760px){
+  .sidebar{height:66px;border-top:1px solid var(--line);border-right:0;box-shadow:0 -6px 20px rgba(18,24,40,.05)}
+  .sidebar nav{margin:0}.topbar{height:68px;padding:0 16px}.page{padding:24px 16px}
+  .auth-form{padding:24px 28px;display:flex;align-items:flex-start;justify-content:center}.mobile-brand{margin:16px 0 44px}
+  .form-card{max-width:390px}.form-card h2{font-size:32px}.demo-accounts{margin-bottom:20px}
+  .stats{gap:12px}.stats article{padding:17px}.panel,.stats article,.document-grid article,.group-grid article{border-radius:13px}
+}

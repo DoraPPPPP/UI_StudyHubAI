@@ -27,11 +27,52 @@ function Icon({ children, tone = '' }) {
   return <span className={`icon ${tone}`}>{children}</span>;
 }
 
-function Login({ onLogin }) {
+function Intro({ onOpenLogin }) {
+  return <main className="intro-shell">
+    <nav className="intro-nav">
+      <div className="brand"><span>✦</span> AI Study Hub</div>
+      <button className="intro-login" onClick={onOpenLogin}>Đăng nhập <span>→</span></button>
+    </nav>
+    <section className="intro-hero">
+      <div className="intro-copy">
+        <span className="eyebrow purple">HỌC TẬP THÔNG MINH HƠN</span>
+        <h1>Biến mọi tài liệu thành <em>tri thức của bạn.</em></h1>
+        <p>Lưu trữ, tổ chức và trò chuyện với tài liệu học tập trong một không gian duy nhất, được hỗ trợ bởi AI.</p>
+        <div className="intro-actions">
+          <button className="primary" onClick={onOpenLogin}>Bắt đầu ngay <span>→</span></button>
+          <span>Miễn phí · Không cần thẻ ngân hàng</span>
+        </div>
+      </div>
+      <div className="intro-visual" aria-label="Minh họa không gian học tập AI">
+        <div className="intro-glow" />
+        <article className="intro-document"><span>PDF</span><div><b>Machine Learning Notes</b><small>42 trang · Đã phân tích</small></div><i>✓</i></article>
+        <article className="intro-ai"><span>✦</span><small>AI SUMMARY</small><h3>Nội dung chính</h3><p>Supervised learning sử dụng dữ liệu đã gắn nhãn để huấn luyện mô hình...</p><div><i/><i/><i/></div></article>
+        <article className="intro-note"><b>12</b><span>Tài liệu<br/><small>tuần này</small></span></article>
+      </div>
+    </section>
+    <section className="intro-features">
+      <article><span>▱</span><div><b>Lưu trữ tập trung</b><small>Mọi tài liệu trong một workspace</small></div></article>
+      <article><span>✦</span><div><b>Trợ lý AI</b><small>Tóm tắt và giải thích tức thì</small></div></article>
+      <article><span>♧</span><div><b>Học tập cộng tác</b><small>Chia sẻ kiến thức cùng bạn bè</small></div></article>
+    </section>
+  </main>;
+}
+
+function Login({ onLogin, onBack }) {
   const [register, setRegister] = useState(false);
   const [email, setEmail] = useState('minh@student.edu.vn');
   const [password, setPassword] = useState('12345678');
-  const submit = () => onLogin(email.trim().toLowerCase() === 'admin@aistudyhub.vn' ? 'admin' : 'user');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const submit = (event) => {
+    event.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      setError('Vui lòng nhập đầy đủ email và mật khẩu.');
+      return;
+    }
+    setError('');
+    onLogin(email.trim().toLowerCase() === 'admin@aistudyhub.vn' ? 'admin' : 'user');
+  };
   return <div className="auth-shell">
     <section className="auth-art">
       <div className="brand light"><span>✦</span> AI Study Hub</div>
@@ -44,20 +85,22 @@ function Login({ onLogin }) {
       <span className="auth-note">Prototype · Mock data · Không kết nối backend</span>
     </section>
     <section className="auth-form">
+      <button className="back-intro" type="button" onClick={onBack}>← Quay lại trang chủ</button>
       <div className="mobile-brand brand"><span>✦</span> AI Study Hub</div>
-      <div className="form-card">
+      <form className="form-card" onSubmit={submit}>
         <span className="eyebrow purple">CHÀO MỪNG BẠN</span>
         <h2>{register ? 'Tạo tài khoản' : 'Đăng nhập'}</h2>
         <p>{register ? 'Bắt đầu xây dựng thư viện học tập của riêng bạn.' : 'Tiếp tục hành trình học tập của bạn.'}</p>
         {register && <label>Họ và tên<input placeholder="Nguyễn Văn A" /></label>}
-        <label>Email hoặc tên đăng nhập<input value={email} onChange={e=>setEmail(e.target.value)} /></label>
-        <label>Mật khẩu<input type="password" value={password} onChange={e=>setPassword(e.target.value)} /></label>
-        <button className="primary wide" onClick={submit}>{register ? 'Tạo tài khoản' : 'Đăng nhập'} <span>→</span></button>
+        <label>Email hoặc tên đăng nhập<input type="email" autoComplete="email" value={email} onChange={e=>{setEmail(e.target.value);setError('')}} /></label>
+        <label>Mật khẩu<div className="password-field"><input type={showPassword ? 'text' : 'password'} autoComplete={register ? 'new-password' : 'current-password'} value={password} onChange={e=>{setPassword(e.target.value);setError('')}} /><button type="button" onClick={()=>setShowPassword(value=>!value)} aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}>{showPassword ? 'Ẩn' : 'Hiện'}</button></div></label>
+        {error && <p className="auth-error" role="alert">{error}</p>}
+        <button className="primary wide" type="submit">{register ? 'Tạo tài khoản' : 'Đăng nhập'} <span>→</span></button>
         <div className="divider"><span>hoặc</span></div>
-        <button className="google" onClick={()=>onLogin('user')}><b>G</b> Tiếp tục với Google</button>
-        {!register && <div className="demo-accounts"><span>Tài khoản demo</span><button onClick={()=>{setEmail('minh@student.edu.vn');setPassword('12345678')}}><b>User</b> minh@student.edu.vn</button><button onClick={()=>{setEmail('admin@aistudyhub.vn');setPassword('admin123')}}><b>Admin</b> admin@aistudyhub.vn</button></div>}
-        <p className="switch">{register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'} <button onClick={() => setRegister(!register)}>{register ? 'Đăng nhập' : 'Đăng ký ngay'}</button></p>
-      </div>
+        <button className="google" type="button" onClick={()=>onLogin('user')}><b>G</b> Tiếp tục với Google</button>
+        {!register && <div className="demo-accounts"><span>Tài khoản demo</span><button type="button" onClick={()=>{setEmail('minh@student.edu.vn');setPassword('12345678');setError('')}}><b>User</b> minh@student.edu.vn</button><button type="button" onClick={()=>{setEmail('admin@aistudyhub.vn');setPassword('admin123');setError('')}}><b>Admin</b> admin@aistudyhub.vn</button></div>}
+        <p className="switch">{register ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'} <button type="button" onClick={() => {setRegister(!register);setError('')}}>{register ? 'Đăng nhập' : 'Đăng ký ngay'}</button></p>
+      </form>
     </section>
   </div>
 }
@@ -165,13 +208,15 @@ function UploadModal({ close }) {
 }
 
 export default function App() {
+  const [showLogin,setShowLogin]=useState(false);
   const [loggedIn,setLoggedIn]=useState(false);
   const [role,setRole]=useState('user');
-  const [page,setPage]=useState('dashboard');
+  const [page,setPage]=useState(null);
   const [upload,setUpload]=useState(false);
   const title=useMemo(()=>nav.find(x=>x[0]===page)?.[2]||'AI Study Hub',[page]);
   const login = (nextRole) => { setRole(nextRole); setPage(nextRole === 'admin' ? 'admin' : 'dashboard'); setLoggedIn(true); };
-  if(!loggedIn) return <Login onLogin={login}/>;
+  if(!loggedIn && !showLogin) return <Intro onOpenLogin={()=>setShowLogin(true)}/>;
+  if(!loggedIn) return <Login onLogin={login} onBack={()=>setShowLogin(false)}/>;
   const pages={dashboard:<Dashboard setPage={setPage} onUpload={()=>setUpload(true)}/>,documents:<Documents onUpload={()=>setUpload(true)}/>,assistant:<Assistant/>,groups:<Groups/>,storage:<Storage/>,profile:<Profile/>,admin:<Admin/>};
-  return <div className={`app ${role === 'admin' ? 'admin-app' : ''}`}><Sidebar page={page} setPage={setPage} role={role} logout={()=>setLoggedIn(false)}/><main><Topbar title={role === 'admin' ? 'Tổng quan quản trị' : title} role={role} onUpload={()=>setUpload(true)}/>{role === 'admin' ? <Admin/> : pages[page]}</main>{role !== 'admin'&&upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
+  return <div className={`app ${role === 'admin' ? 'admin-app' : ''}`}><Sidebar page={page} setPage={setPage} role={role} logout={()=>{setLoggedIn(false);setShowLogin(true)}}/><main><Topbar title={role === 'admin' ? 'Tổng quan quản trị' : title} role={role} onUpload={()=>setUpload(true)}/>{role === 'admin' ? <Admin/> : pages[page]}</main>{role !== 'admin'&&upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
 }

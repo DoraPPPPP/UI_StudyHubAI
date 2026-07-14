@@ -82,7 +82,7 @@ function Login({ onLogin, onBack }) {
         <p>Lưu trữ, tổ chức và trò chuyện với mọi tài liệu học tập trong một không gian duy nhất.</p>
         <div className="art-cards"><div>PDF</div><div>AI<br/><small>Summary ready</small></div><div>DOC</div></div>
       </div>
-      <span className="auth-note">Prototype · Mock data · Không kết nối backend</span>
+      <span className="auth-note">Học tập thông minh · Quản lý tập trung · Hỗ trợ bởi AI</span>
     </section>
     <section className="auth-form">
       <button className="back-intro" type="button" onClick={onBack}>← Quay lại trang chủ</button>
@@ -123,8 +123,9 @@ function Topbar({ title, onUpload, role }) {
 }
 
 function Dashboard({ setPage, onUpload }) {
+  const today = new Intl.DateTimeFormat('vi-VN', { weekday: 'long', day: '2-digit', month: 'long' }).format(new Date()).toUpperCase();
   return <div className="page fade">
-    <section className="welcome"><div><span className="eyebrow purple">THỨ SÁU, 03 THÁNG 7</span><h1>Chào buổi sáng, Minh 👋</h1><p>Sẵn sàng tiếp tục hành trình học tập hôm nay?</p></div><button className="primary" onClick={onUpload}>＋ Tải tài liệu mới</button></section>
+    <section className="welcome"><div><span className="eyebrow purple">{today}</span><h1>Chào buổi sáng, Minh 👋</h1><p>Sẵn sàng tiếp tục hành trình học tập hôm nay?</p></div><button className="primary" onClick={onUpload}>＋ Tải tài liệu mới</button></section>
     <section className="stats">
       <article><Icon tone="blue">▱</Icon><div><span>Tổng tài liệu</span><strong>128</strong><small>+12 tháng này</small></div></article>
       <article><Icon tone="violet">✦</Icon><div><span>Cuộc trò chuyện AI</span><strong>46</strong><small>+8 tuần này</small></div></article>
@@ -171,6 +172,7 @@ function Profile() {
 }
 
 function Admin() {
+  const updatedAt = new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date());
   const [tab, setTab] = useState('users');
   const [users, setUsers] = useState([
     { name: 'Nguyễn Hoàng Minh', email: 'minh@student.edu.vn', role: 'USER', plan: 'Student', status: 'Hoạt động', joined: '03/07/2026', avatar: 'NM' },
@@ -180,7 +182,7 @@ function Admin() {
   ]);
   const toggle = (email) => setUsers(list => list.map(u => u.email === email ? {...u, status: u.status === 'Đã khóa' ? 'Hoạt động' : 'Đã khóa'} : u));
   return <div className="page admin-page fade">
-    <section className="page-title"><div><span className="eyebrow purple">ADMIN CONSOLE</span><h1>Trung tâm quản trị</h1><p>Theo dõi hoạt động và quản lý toàn bộ hệ thống.</p></div><div className="admin-date">◷ Dữ liệu mock · 03/07/2026</div></section>
+    <section className="page-title"><div><span className="eyebrow purple">ADMIN CONSOLE</span><h1>Trung tâm quản trị</h1><p>Theo dõi hoạt động và quản lý toàn bộ hệ thống.</p></div><div className="admin-date">◷ Cập nhật · {updatedAt}</div></section>
     <section className="stats admin-stats">
       <article><Icon tone="blue">♧</Icon><div><span>Người dùng</span><strong>1,284</strong><small>↑ 12.4% tháng này</small></div></article>
       <article><Icon tone="violet">▱</Icon><div><span>Tài liệu</span><strong>8,642</strong><small>↑ 18.7% tháng này</small></div></article>

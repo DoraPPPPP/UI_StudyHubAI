@@ -40,7 +40,7 @@ function Intro({ onOpenLogin, onOpenRegister }) {
         <p>Lưu trữ, tổ chức và trò chuyện với tài liệu học tập trong một không gian duy nhất, được hỗ trợ bởi AI.</p>
         <div className="intro-actions">
           <button className="primary" onClick={onOpenRegister}>Tạo tài khoản miễn phí <span>→</span></button>
-          <span>Miễn phí · Không cần thẻ ngân hàng</span>
+          <button className="intro-secondary" onClick={()=>document.querySelector('.intro-features')?.scrollIntoView({behavior:'smooth'})}>Tìm hiểu thêm</button>
         </div>
       </div>
       <div className="intro-visual" aria-label="Minh họa không gian học tập AI">
@@ -54,11 +54,13 @@ function Intro({ onOpenLogin, onOpenRegister }) {
       <article><span>▱</span><div><b>Lưu trữ tập trung</b><small>Mọi tài liệu trong một workspace</small></div></article>
       <article><span>✦</span><div><b>Trợ lý AI</b><small>Tóm tắt và giải thích tức thì</small></div></article>
       <article><span>♧</span><div><b>Học tập cộng tác</b><small>Chia sẻ kiến thức cùng bạn bè</small></div></article>
+      <article><span>⌯</span><div><b>Chia sẻ linh hoạt</b><small>Phân quyền và làm việc nhóm dễ dàng</small></div></article>
     </section>
+    <section className="intro-stats"><div><b>10K+</b><small>Người dùng</small></div><div><b>50K+</b><small>Tài liệu được lưu trữ</small></div><div><b>1M+</b><small>Câu hỏi được AI giải đáp</small></div><div><b>99.9%</b><small>Uptime hệ thống</small></div></section>
   </main>;
 }
 
-function Login({ onLogin, onBack, initialMode = 'login' }) {
+function Login({ onLogin, onBack, onSwitch, initialMode = 'login' }) {
   const [email, setEmail] = useState(initialMode === 'register' ? '' : 'minh@student.edu.vn');
   const [password, setPassword] = useState(initialMode === 'register' ? '' : '12345678');
   const [showPassword, setShowPassword] = useState(false);
@@ -67,8 +69,8 @@ function Login({ onLogin, onBack, initialMode = 'login' }) {
   const register = (event) => { event.preventDefault(); const data = new FormData(event.currentTarget); if (data.get('newPassword') !== data.get('confirmPassword')) return setError('Mật khẩu xác nhận chưa khớp.'); setError(''); onLogin('user'); };
   return <main className="auth-page">
     <header className="auth-header"><button className="brand" onClick={onBack}><span>✦</span> AI Study Hub</button><button onClick={onBack}>← Trang chủ</button></header>
-    <div className="auth-dual">
-      <section className="auth-login-panel">
+    <div className={`auth-dual single-auth ${initialMode}-only`}>
+      {initialMode==='login' && <section className="auth-login-panel">
         <div className="auth-panel-copy"><span className="auth-orb">✦</span><h1>Chào mừng trở lại!</h1><p>Đăng nhập để tiếp tục quản lý tài liệu và học tập thông minh với AI.</p></div>
         <form className="auth-clean-form" onSubmit={login}>
           <h2>Đăng nhập</h2><p>Truy cập không gian học tập của bạn.</p>
@@ -78,9 +80,10 @@ function Login({ onLogin, onBack, initialMode = 'login' }) {
           <button className="primary wide" type="submit">Đăng nhập</button><div className="divider"><span>Hoặc đăng nhập với</span></div>
           <div className="social-row"><button type="button" onClick={()=>onLogin('user')}><b>G</b> Google</button><button type="button" onClick={()=>onLogin('user')}><b>▦</b> Microsoft</button></div>
           <small className="demo-hint">Admin: admin@aistudyhub.vn / admin123</small>
+          <p className="auth-switch-line">Chưa có tài khoản? <button type="button" onClick={()=>onSwitch('register')}>Đăng ký ngay</button></p>
         </form>
-      </section>
-      <section className="auth-register-panel">
+      </section>}
+      {initialMode==='register' && <section className="auth-register-panel">
         <form className="auth-clean-form register-form" onSubmit={register}>
           <span className="eyebrow purple">BẮT ĐẦU MIỄN PHÍ</span><h2>Tạo tài khoản mới</h2><p>Đăng ký để bắt đầu hành trình học tập thông minh cùng AI Study Hub.</p>
           <label>Họ và tên<input name="fullName" placeholder="Nhập họ và tên" required/></label>
@@ -90,8 +93,9 @@ function Login({ onLogin, onBack, initialMode = 'login' }) {
           <label>Xác nhận mật khẩu<input name="confirmPassword" type="password" placeholder="Nhập lại mật khẩu" required/></label>
           <label className="terms-check"><input type="checkbox" required/><span>Tôi đồng ý với <button type="button">Điều khoản sử dụng</button> và <button type="button">Chính sách bảo mật</button>.</span></label>
           <button className="primary wide" type="submit">Đăng ký <span>→</span></button>
+          <p className="auth-switch-line">Đã có tài khoản? <button type="button" onClick={()=>onSwitch('login')}>Đăng nhập ngay</button></p>
         </form>
-      </section>
+      </section>}
     </div>
   </main>;
 }
@@ -246,7 +250,7 @@ export default function App() {
   const title=useMemo(()=>nav.find(x=>x[0]===page)?.[2]||'AI Study Hub',[page]);
   const login = (nextRole) => { setRole(nextRole); setPage(nextRole === 'admin' ? 'admin' : 'dashboard'); setLoggedIn(true); };
   if(!loggedIn && !authMode) return <Intro onOpenLogin={()=>setAuthMode('login')} onOpenRegister={()=>setAuthMode('register')}/>;
-  if(!loggedIn) return <Login key={authMode} initialMode={authMode} onLogin={login} onBack={()=>setAuthMode(null)}/>;
+  if(!loggedIn) return <Login key={authMode} initialMode={authMode} onLogin={login} onBack={()=>setAuthMode(null)} onSwitch={setAuthMode}/>;
   const pages={dashboard:<Dashboard setPage={setPage} onUpload={()=>setUpload(true)}/>,documents:<Documents onUpload={()=>setUpload(true)}/>,assistant:<Assistant/>,groups:<Groups/>,storage:<Storage/>,profile:<Profile/>};
   return <div className={`app ${role === 'admin' ? 'admin-app' : ''}`}><Sidebar page={page} setPage={setPage} role={role} logout={()=>{setLoggedIn(false);setAuthMode('login')}}/><main><Topbar title={role === 'admin' ? 'Quản trị hệ thống' : title} role={role} onUpload={()=>setUpload(true)}/>{role === 'admin' ? <Admin section={page} onSectionChange={setPage}/> : pages[page]}</main>{role !== 'admin'&&upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
 }

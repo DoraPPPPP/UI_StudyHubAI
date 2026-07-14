@@ -79,7 +79,7 @@ function Login({ onLogin, onBack, onSwitch, initialMode = 'login' }) {
           <button type="button" className="forgot-link">Quên mật khẩu?</button>{error&&<p className="auth-error">{error}</p>}
           <button className="primary wide" type="submit">Đăng nhập</button><div className="divider"><span>Hoặc đăng nhập với</span></div>
           <div className="social-row"><button type="button" onClick={()=>onLogin('user')}><b>G</b> Google</button><button type="button" onClick={()=>onLogin('user')}><b>▦</b> Microsoft</button></div>
-          <small className="demo-hint">Admin: admin@aistudyhub.vn / admin123</small>
+          <div className="quick-accounts"><span>Đăng nhập nhanh</span><button type="button" onClick={()=>{setEmail('minh@student.edu.vn');setPassword('12345678')}}><b>User</b><small>minh@student.edu.vn</small></button><button type="button" onClick={()=>{setEmail('admin@aistudyhub.vn');setPassword('admin123')}}><b>Admin</b><small>admin@aistudyhub.vn</small></button></div>
           <p className="auth-switch-line">Chưa có tài khoản? <button type="button" onClick={()=>onSwitch('register')}>Đăng ký ngay</button></p>
         </form>
       </section>}
@@ -212,7 +212,16 @@ function Admin({ section = 'admin', onSectionChange }) {
     { name: 'Pro', price: '99.000đ', users: '155', revenue: '6.2M', tone: 'orange' },
   ];
   const toggle = (email) => setUsers(list => list.map(u => u.email === email ? {...u, status: u.status === 'Đã khóa' ? 'Hoạt động' : 'Đã khóa'} : u));
+  const isOverview = section === 'admin';
+  const pageInfo = {
+    users:['QUẢN LÝ NGƯỜI DÙNG','Danh sách người dùng','Quản lý tài khoản, vai trò, gói dịch vụ và trạng thái hoạt động.'],
+    documents:['QUẢN LÝ NỘI DUNG','Danh sách tài liệu','Kiểm duyệt tài liệu, chủ sở hữu, dung lượng và trạng thái an toàn.'],
+    groups:['QUẢN LÝ CỘNG ĐỒNG','Danh sách nhóm học tập','Theo dõi thành viên, tài liệu và trạng thái của từng nhóm học tập.'],
+    plans:['QUẢN LÝ DỊCH VỤ','Gói lưu trữ và doanh thu','Cấu hình các gói dịch vụ và theo dõi số người đang sử dụng.'],
+    logs:['GIÁM SÁT HỆ THỐNG','Nhật ký hệ thống','Theo dõi đăng nhập, thay đổi dữ liệu và các sự kiện quan trọng.']
+  }[tab];
   return <div className="page admin-page fade">
+    {isOverview ? <>
     <section className="page-title"><div><span className="eyebrow purple">ADMIN CONSOLE</span><h1>Trung tâm quản trị</h1><p>Theo dõi hoạt động và quản lý toàn bộ hệ thống.</p></div><div className="admin-date">◷ Cập nhật · {updatedAt}</div></section>
     <section className="stats admin-stats">
       <button className={tab==='users'?'selected':''} onClick={()=>setTab('users')}><Icon tone="blue">♧</Icon><div><span>Người dùng</span><strong>1,284</strong><small>↑ 12.4% tháng này</small></div><i>Quản lý →</i></button>
@@ -224,6 +233,8 @@ function Admin({ section = 'admin', onSectionChange }) {
       <section className="panel admin-chart"><div className="panel-head"><div><h3>Tăng trưởng người dùng</h3><p>Số tài khoản mới trong 7 tháng gần nhất</p></div><button>7 tháng⌄</button></div><div className="chart-area"><div className="y-axis"><span>400</span><span>300</span><span>200</span><span>100</span><span>0</span></div><div className="bars">{[['T1',130],['T2',185],['T3',160],['T4',245],['T5',275],['T6',320],['T7',372]].map(([m,v])=><div key={m}><span style={{height:`${v/4}px`}}><i>{v}</i></span><small>{m}</small></div>)}</div></div></section>
       <section className="panel system-health"><div className="panel-head"><div><h3>Trạng thái hệ thống</h3><p>Tổng quan các dịch vụ</p></div><span className="healthy">● Ổn định</span></div>{[['REST API','99.98%'],['Cloud Storage','99.95%'],['AI Service','99.72%'],['Email Service','99.91%']].map(([x,v])=><div className="health-row" key={x}><span><i/> {x}</span><b>{v}</b></div>)}<div className="health-note">Không có sự cố nghiêm trọng trong 24 giờ qua.</div></section>
     </div>
+    </> : <>
+    <section className="page-title admin-subpage-title"><div><button onClick={()=>onSectionChange?.('admin')}>← Tổng quan</button><span className="eyebrow purple">{pageInfo[0]}</span><h1>{pageInfo[1]}</h1><p>{pageInfo[2]}</p></div><div className="admin-date">◷ Cập nhật · {updatedAt}</div></section>
     <section className="panel admin-management">
       <div className="admin-tabs"><button className={tab==='users'?'active':''} onClick={()=>setTab('users')}>Người dùng</button><button className={tab==='documents'?'active':''} onClick={()=>setTab('documents')}>Tài liệu</button><button className={tab==='groups'?'active':''} onClick={()=>setTab('groups')}>Nhóm học tập</button><button className={tab==='plans'?'active':''} onClick={()=>setTab('plans')}>Gói dịch vụ</button><button className={tab==='logs'?'active':''} onClick={()=>setTab('logs')}>Nhật ký</button><div className="search-input">⌕ <input placeholder="Tìm trong mục này..."/></div></div>
       {tab==='users' && <div className="admin-table"><div className="admin-tr header"><span>NGƯỜI DÙNG</span><span>VAI TRÒ</span><span>GÓI</span><span>NGÀY THAM GIA</span><span>TRẠNG THÁI</span><span></span></div>{users.map(u=><div className="admin-tr" key={u.email}><span className="admin-user"><i>{u.avatar}</i><b>{u.name}<small>{u.email}</small></b></span><span>{u.role}</span><span><em className={`plan-${u.plan.toLowerCase()}`}>{u.plan}</em></span><span>{u.joined}</span><span><em className={u.status==='Hoạt động'?'status-active':'status-locked'}>● {u.status}</em></span><span><button className="row-action" onClick={()=>toggle(u.email)}>{u.status==='Đã khóa'?'Mở khóa':'Khóa'}</button></span></div>)}</div>}
@@ -233,6 +244,7 @@ function Admin({ section = 'admin', onSectionChange }) {
       {tab==='logs' && <div className="log-list"><p><b>ADMIN_LOGIN</b><span><strong>Đăng nhập quản trị</strong>admin@aistudyhub.vn đã đăng nhập hệ thống</span><em className="status-active">Thành công</em><small>10:42</small></p><p><b>USER_LOCKED</b><span><strong>Cập nhật người dùng</strong>Tài khoản huy.le@student.edu.vn đã bị khóa</span><em className="plan-pro">Cảnh báo</em><small>09:18</small></p><p><b>PLAN_UPDATED</b><span><strong>Cập nhật dịch vụ</strong>Gói Student được cập nhật dung lượng</span><em className="status-active">Thành công</em><small>Hôm qua</small></p><p><b>DOCUMENT_SCAN</b><span><strong>Kiểm duyệt tài liệu</strong>Hệ thống đã quét 186 tài liệu mới</span><em className="plan-student">Tự động</em><small>Hôm qua</small></p></div>}
       <div className="table-footer"><span>Đang hiển thị dữ liệu mới nhất của hệ thống</span><div><button>‹</button><button className="current">1</button><button>2</button><button>3</button><button>›</button></div></div>
     </section>
+    </>}
   </div>
 }
 
@@ -252,5 +264,6 @@ export default function App() {
   if(!loggedIn && !authMode) return <Intro onOpenLogin={()=>setAuthMode('login')} onOpenRegister={()=>setAuthMode('register')}/>;
   if(!loggedIn) return <Login key={authMode} initialMode={authMode} onLogin={login} onBack={()=>setAuthMode(null)} onSwitch={setAuthMode}/>;
   const pages={dashboard:<Dashboard setPage={setPage} onUpload={()=>setUpload(true)}/>,documents:<Documents onUpload={()=>setUpload(true)}/>,assistant:<Assistant/>,groups:<Groups/>,storage:<Storage/>,profile:<Profile/>};
-  return <div className={`app ${role === 'admin' ? 'admin-app' : ''}`}><Sidebar page={page} setPage={setPage} role={role} logout={()=>{setLoggedIn(false);setAuthMode('login')}}/><main><Topbar title={role === 'admin' ? 'Quản trị hệ thống' : title} role={role} onUpload={()=>setUpload(true)}/>{role === 'admin' ? <Admin section={page} onSectionChange={setPage}/> : pages[page]}</main>{role !== 'admin'&&upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
+  const adminTitles={admin:'Tổng quan hệ thống','admin-users':'Người dùng','admin-documents':'Tài liệu','admin-groups':'Nhóm học tập','admin-plans':'Gói lưu trữ','admin-logs':'Nhật ký hệ thống'};
+  return <div className={`app ${role === 'admin' ? 'admin-app' : ''}`}><Sidebar page={page} setPage={setPage} role={role} logout={()=>{setLoggedIn(false);setAuthMode('login')}}/><main><Topbar title={role === 'admin' ? adminTitles[page] : title} role={role} onUpload={()=>setUpload(true)}/>{role === 'admin' ? <Admin section={page} onSectionChange={setPage}/> : pages[page]}</main>{role !== 'admin'&&upload&&<UploadModal close={()=>setUpload(false)}/>}</div>;
 }
